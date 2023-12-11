@@ -4,9 +4,11 @@ import { withdrawSignatures } from "./utils";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import WETHGatewayAbi from "./abi/WETHGateway.json";
+import BigNumber from "bignumber.js";
 
 
-export default async function getHealthFactorAfterWithdraw(input: Input) {
+// TODO: add multicall to speed up the process
+export default async function getHealthFactorAfterWithdraw(input: Input) : Promise<BigNumber>{
   const web3 = new Web3(input.chain.rpc);
   // We start by getting the user generic data
   const lendingPool = pools.AaveV3Ethereum.POOL;
@@ -139,18 +141,19 @@ export default async function getHealthFactorAfterWithdraw(input: Input) {
   const assetBaseValue =
     (oraclePriceValue * withdrawAmount) / baseAssetDecimals;
 
-  const newCollateralBase =
+const newCollateralBase =
     userAccountData.totalCollateralBase - assetBaseValue;
 
-  // We can now calculate the new health factor
-  // https://docs.aave.com/developers/guides/liquidations#how-is-health-factor-calculated
-  const newHealthFactor =
+// We can now calculate the new health factor
+// https://docs.aave.com/developers/guides/liquidations#how-is-health-factor-calculated
+const newHealthFactor: BigNumber = new BigNumber(
     (newCollateralBase * userAccountData.currentLiquidationThreshold) /
-    userAccountData.totalDebtBase;
+    userAccountData.totalDebtBase
+);
 
-  if (newHealthFactor > userAccountData.healthFactor) {
-    throw Error("Invalid health factor calculation: " + newHealthFactor);
-  }
+if (newHealthFactor.gt(userAccountData.healthFactor)) {
+    throw Error("Invalid health factor calculation: " + newHealthFactor.toString());
+}
 
-  return newHealthFactor;
+return newHealthFactor;
 }
