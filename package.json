@@ -1,0 +1,21 @@
+{
+  "name": "aavetransactionvalidator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/web3": "^1.2.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@bgd-labs/aave-address-book": "^2.13.0",
+    "ethereum-multicall": "^2.21.0",
+    "web3": "^1.10.3"
+  }
+}
