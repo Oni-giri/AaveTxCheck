@@ -1,5 +1,5 @@
 import { Contract, Signer } from "ethers";
-import { getAddressBook } from "../../addressUtils";
+import { getAddressBook } from "../../helpers/addressHelpers";
 import { tokenAddressBook } from "./tokenAddressBook";
 import { ethers } from "ethers";
 import WETHGatewayABI from "../../abi/WETHGateway.json";
@@ -58,3 +58,23 @@ export async function supplyTokenToPool(
 
   await safeMock.executeCall(addresses.POOL, calldata);
 }
+
+export async function borrowTokenFromPool(
+  signer: Signer,
+  safeMock: Contract,
+  tokenAddress: string,
+  amount: ethers.BigNumber
+): Promise<void> {
+  const addresses = getAddressBook(1);
+  const contractInterface = new ethers.utils.Interface(PoolABI);
+  const calldata = contractInterface.encodeFunctionData("borrow", [
+    tokenAddress,
+    amount,
+    2,
+    0,
+    safeMock.address,
+  ]);
+
+  await safeMock.executeCall(addresses.POOL, calldata);
+}
+

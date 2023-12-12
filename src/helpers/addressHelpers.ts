@@ -1,5 +1,5 @@
 import * as pools from "@bgd-labs/aave-address-book";
-import { Input } from "./types";
+import { Input } from "../types";
 
 const chainIdToAddressBook: { [chainId: number]: any } = {
   1: pools.AaveV3Ethereum,

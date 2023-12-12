@@ -1,17 +1,12 @@
 import { Input } from "./types";
-import {
-  isAllowedSignature,
-  allowedFunctionSignatures,
-  withdrawSignatures,
-  isAllowedActor,
-} from "./utils";
-import { validatePoolAddress } from "./addressUtils";
-import getHealthFactorAfterWithdraw from "./healthFactorAfterWithdraw";
+import * as helpers from "./helpers";
+
 import BigNumber from "bignumber.js";
+import { isAllowedSignature } from './helpers/validationHelpers';
 
 async function validate(input: Input) {
   // We start by validating the pool address
-  validatePoolAddress(input);
+  helpers.validatePoolAddress(input);
 
   // We can now analyse the data field of the transaction
   // Validating the signature
@@ -19,11 +14,11 @@ async function validate(input: Input) {
     throw new Error(
       `Invalid calldata: ${input.tx.data.slice(0, 10)} \n
         Expected: \n
-        \t Allowed function signatures: ${allowedFunctionSignatures}`
+        \t Allowed function signatures: ${helpers.allowedFunctionSignatures}`
     );
   }
 
-  if (!isAllowedActor(input.boundaries.allowedActor, input.tx.data)) {
+  if (!helpers.isAllowedActor(input.boundaries.allowedActor, input.tx.data)) {
     throw new Error(
       `Invalid actor \n
         Expected: \n
@@ -32,8 +27,8 @@ async function validate(input: Input) {
   }
 
   // We can now check the health factor of the user after the withdraw, if there is one
-  if (withdrawSignatures.includes(input.tx.data.slice(0, 10))) {
-    const newHealthFactor = await getHealthFactorAfterWithdraw(input);
+  if (helpers.withdrawSignatures.includes(input.tx.data.slice(0, 10))) {
+    const newHealthFactor = await helpers.getHealthFactorAfterWithdraw(input);
     const maxHealthFactor = new BigNumber(input.boundaries.healthFactor);
     if (newHealthFactor.isLessThan(input.boundaries.healthFactor)) {
       throw new Error(

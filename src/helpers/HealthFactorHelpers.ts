@@ -1,9 +1,9 @@
-import { Input } from "./types";
-import { withdrawSignatures } from "./utils";
+import { Input } from "../types";
+import { withdrawSignatures } from "./validationHelpers";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
-import WETHGatewayAbi from "./abi/WETHGateway.json";
-import { getAddressBook } from "./addressUtils";
+import WETHGatewayAbi from "../abi/WETHGateway.json";
+import { getAddressBook } from "./addressHelpers";
 import BigNumber from "bignumber.js";
 
 // TODO: add multicall to speed up the process
