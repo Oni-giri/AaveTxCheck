@@ -35,7 +35,6 @@ export async function supplyETHToPool(
     0,
   ]);
 
-  console.log("amount", amount.toString());
   await safeMock.executeCallWithValue(addresses.WETH_GATEWAY, calldata, {
     value: ethers.utils.parseEther(amount.toString()),
   });

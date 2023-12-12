@@ -26,30 +26,5 @@ export default function generateCallData(
   abi: any
 ) {
   const contractInterface = new ethers.utils.Interface(abi);
-  const web3 = new Web3();
-  //   console.log(
-  //     "sig1",
-  //     web3.eth.abi.encodeFunctionSignature(
-  //       "depositETH(address pool, address onBehalfOf, uint16 referralCode)"
-  //     )
-  //   );
-  //   console.log(
-  //     "sig2",
-  //     contractInterface.encodeFunctionData("depositETH", params)
-  //   );
-    // TODO: replace the sigs with the nameless versions
-    console.log(
-      "sig3",
-      web3.utils.sha3("depositETH(address,address,uint16)")
-    );
-    const fragment = ethers.utils.FunctionFragment.from(
-      "depositETH(address pool, address onBehalfOf, uint16 referralCode)"
-    );
-    const iface = new ethers.utils.Interface([fragment]);
-    const selector = iface.getSighash(fragment);
-    console.log("Selector:", selector);
-  //   console.log("function name: ", functionName, "params: ", params);
-  console.log(contractInterface.fragments[3].name);
-  //   console.log(contractInterface.encodeFunctionData("depositETH", params));
   return contractInterface.encodeFunctionData(functionName, params);
 }

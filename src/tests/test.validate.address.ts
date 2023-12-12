@@ -16,9 +16,7 @@ describe("validate.address", () => {
 
   beforeEach(async () => {
     safe = await fxt.deploySafeMock(ethers!); // Assign a value to 'safe'
-    console.log("safe", safe.address)
     await fxt.approveAavePool(safe);
-    console.log("approved")
   });
 
   it("should allow the input", async () => {
