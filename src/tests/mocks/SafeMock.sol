@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IPool.sol";
+import "hardhat/console.sol";
 
 contract SafeMock {
     function executeCall(
@@ -19,8 +20,8 @@ contract SafeMock {
         (success, result) = target.call(data);
     }
 
-    function approveToken(address token, address to, uint256 amount) external {
-        IERC20(token).approve(to, amount);
+    function approveToken(address token, address to) external {
+        IERC20(token).approve(to, type(uint256).max);
     }
 
     function supplyToPool(

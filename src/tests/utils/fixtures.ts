@@ -1,9 +1,9 @@
 import { Contract, Signer } from "ethers";
 import { getAddressBook } from "../../helpers/addressHelpers";
 import { tokenAddressBook } from "./tokenAddressBook";
-import { ethers } from "ethers";
 import WETHGatewayABI from "../../abi/WETHGateway.json";
 import PoolABI from "../../abi/Pool.json";
+import ethers from "ethers";
 
 export async function deploySafeMock(ethers: any): Promise<Contract> {
   const SafeMock = await ethers.getContractFactory("SafeMock");
@@ -12,14 +12,12 @@ export async function deploySafeMock(ethers: any): Promise<Contract> {
   return safeMock;
 }
 
-export async function approveAavePool(
-  signer: Signer,
-  safeMock: Contract
-): Promise<void> {
+export async function approveAavePool(safeMock: Contract): Promise<void> {
   const addresses = getAddressBook(1);
+  const tokens: any[] = Object.values(tokenAddressBook.ethereum);
 
-  for (const tokenAddress of Object.values(tokenAddressBook)) {
-    await safeMock.approve(addresses.POOL, tokenAddress);
+  for (const tokenAddress of tokens) {
+    await safeMock.approveToken(tokenAddress, addresses.POOL);
   }
 }
 
@@ -37,6 +35,7 @@ export async function supplyETHToPool(
     0,
   ]);
 
+  console.log("amount", amount.toString());
   await safeMock.executeCallWithValue(addresses.WETH_GATEWAY, calldata, {
     value: ethers.utils.parseEther(amount.toString()),
   });
@@ -77,4 +76,3 @@ export async function borrowTokenFromPool(
 
   await safeMock.executeCall(addresses.POOL, calldata);
 }
-

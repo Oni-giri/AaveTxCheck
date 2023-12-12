@@ -1,30 +1,45 @@
-import { AbiItem } from "web3-utils";
-const poolAbi: AbiItem[] = require("./abi/Pool.json");
-const wethGatewayAbi: AbiItem[] = require("./abi/WETHGateway.json");
 import Web3 from "web3";
 const web3 = new Web3();
+import { readFileSync } from 'fs';
 
 // From https://docs.aave.com/developers/core-contracts/pool
 // https://docs.aave.com/developers/periphery-contracts/wethgateway
 export const allowedFunctionNames = [
-  "supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
-  "depositETH(address pool, address onBehalfOf, uint16 referralCode)",
-  "withdraw(address asset, uint256 amount, address to)",
-  "withdrawETH(address pool, uint256 amount, address to)",
+  "supply(address,uint256,address,uint16)",
+  "depositETH(address,address,uint16)",
+  "withdraw(address,uint256,address)",
+  "withdrawETH(address,uint256,address)",
 ];
 
 export const allowedFunctionSignatures = allowedFunctionNames.map((fn) =>
   web3.eth.abi.encodeFunctionSignature(fn)
 );
 
+// Function to read the ABI file and return a mapping of function names to signatures
+async function generateFunctionSignatureMapping(abiFilePath: string): Promise<{ [key: string]: string }> {
+  // Read the ABI file
+  const abi = JSON.parse(readFileSync(abiFilePath, 'utf8'));
+
+  // Create the mapping
+  const signatureMapping = abi
+      .filter((item: any) => item.type === 'function')
+      .reduce((acc: { [key: string]: string }, func: any) => {
+          const signature = web3.eth.abi.encodeFunctionSignature(func);
+          acc[func.name] = signature;
+          return acc;
+      }, {});
+
+  return signatureMapping;
+}
+
 export const supplySignatures = [
-  "supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
-  "depositETH(address pool, address onBehalfOf, uint16 referralCode)",
+  "supply(address,uint256,address,uint16)",
+  "depositETH(address,address,uint16)",
 ];
 
 export const withdrawSignatures = [
-  "withdraw(address asset, uint256 amount, address to)",
-  "withdrawETH(address pool, uint256 amount, address to)",
+  "withdraw(address,uint256,address)",
+  "withdrawETH(address,uint256,address)",
 ];
 
 // Function to check if calldata corresponds to an allowed function

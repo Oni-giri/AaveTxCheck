@@ -4,7 +4,7 @@ import * as helpers from "./helpers";
 import BigNumber from "bignumber.js";
 import { isAllowedSignature } from './helpers/validationHelpers';
 
-async function validate(input: Input) {
+export async function validate(input: Input) {
   // We start by validating the pool address
   helpers.validatePoolAddress(input);
 
@@ -30,7 +30,7 @@ async function validate(input: Input) {
   if (helpers.withdrawSignatures.includes(input.tx.data.slice(0, 10))) {
     const newHealthFactor = await helpers.getHealthFactorAfterWithdraw(input);
     const maxHealthFactor = new BigNumber(input.boundaries.healthFactor);
-    if (newHealthFactor.isLessThan(input.boundaries.healthFactor)) {
+    if (newHealthFactor.isLessThan(maxHealthFactor)) {
       throw new Error(
         `Health factor too low: ${newHealthFactor.toFixed()} \n
         Expected: \n
@@ -40,4 +40,3 @@ async function validate(input: Input) {
   }
 }
 
-module.exports = validate;
