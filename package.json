@@ -1,16 +1,22 @@
 {
-  "name": "aavetransactionvalidator",
+  "name": "aave-tx-check",
   "version": "1.0.0",
-  "description": "",
+  "description": "Utility to check if a transaction is a valid Aave transaction",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "web3",
+    "aave",
+    "ethereum",
+    "defi"
+  ],
+  "author": "Yakitori",
   "license": "ISC",
   "devDependencies": {
     "@types/web3": "^1.2.2",
+    "hardhat": "^2.19.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
