@@ -1,7 +1,7 @@
 import * as pools from "@bgd-labs/aave-address-book";
 import { Input } from "./types";
 
-const chainIdToAddressBook = {
+const chainIdToAddressBook: { [chainId: number]: any } = {
   1: pools.AaveV3Ethereum,
   42161: pools.AaveV3Arbitrum,
   43114: pools.AaveV3Avalanche,
@@ -14,9 +14,12 @@ const chainIdToAddressBook = {
   250: pools.AaveV3Fantom,
 };
 
+export function getAddressBook(chainId: number): any {
+  return chainIdToAddressBook[chainId];
+}
+
 export function validatePoolAddress(input: Input) {
-  const addressBook: any =
-    chainIdToAddressBook[input.chain.id as keyof typeof chainIdToAddressBook];
+  const addressBook: any = chainIdToAddressBook[input.chain.id];
   if (!addressBook) {
     throw new Error("Invalid chain id: " + input.chain.id);
   }

@@ -1,6 +1,4 @@
-import Web3 from "web3";
 import { Input } from "./types";
-import * as pools from "@bgd-labs/aave-address-book";
 import {
   isAllowedSignature,
   allowedFunctionSignatures,
@@ -12,8 +10,6 @@ import getHealthFactorAfterWithdraw from "./healthFactorAfterWithdraw";
 import BigNumber from "bignumber.js";
 
 async function validate(input: Input) {
-  const web3 = new Web3(input.chain.rpc);
-
   // We start by validating the pool address
   validatePoolAddress(input);
 
@@ -48,3 +44,5 @@ async function validate(input: Input) {
     }
   }
 }
+
+module.exports = validate;
