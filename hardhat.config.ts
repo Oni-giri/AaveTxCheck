@@ -1,4 +1,4 @@
-/** @type import('hardhat/config').HardhatUserConfig */
+require('dotenv').config()
 
 module.exports = {
   solidity: "0.8.20",
@@ -14,9 +14,7 @@ module.exports = {
       },
       accounts: [
         {
-          // ONLY FOR TESTING
-          privateKey:
-            "0000000000000000000000000000000000000000000000000000000000000000",
+          privateKey: process.env.PRIVATE_KEY,
           balance: "10000000000000000000000", // 10000 ETH
         },
       ],
