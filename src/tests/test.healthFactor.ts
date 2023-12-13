@@ -33,18 +33,18 @@ describe("validate.healthFactor", () => {
   });
 
   describe("Valid inputs", () => {
-    it("Should allow to withdraw with required healthFactor 0", async () => {
+    it("Should allow to withdraw with required healthFactor of 2", async () => {
       const input: Input = {
         chain: {
           id: 1,
-          rpc: process.env.RPC_URL as string,
+          rpc: "http://127.0.0.1:8545/",
         },
         tx: {
           data: generateCallData(
             "withdraw",
             [
               addresses.ASSETS.WETH.UNDERLYING,
-              ethers.utils.parseEther("0.1").toString(),
+              ethers.utils.parseEther("0.7").toString(),
               safe.address,
             ],
             PoolABI
@@ -54,7 +54,7 @@ describe("validate.healthFactor", () => {
         },
         boundaries: {
           allowedActor: safe.address,
-          healthFactor: 0,
+          healthFactor: 20000,
         },
       };
 
@@ -67,7 +67,6 @@ describe("validate.healthFactor", () => {
       const balanceBefore = await safe.getATokenBalance(
         addresses.ASSETS.WETH.A_TOKEN
       );
-
       expect(balanceBefore.gt(ethers.constants.Zero)).to.be.true;
 
       // We now borrow some assets
@@ -76,85 +75,70 @@ describe("validate.healthFactor", () => {
         addresses.ASSETS.WETH.UNDERLYING
       );
 
-      console.log("poool ", addresses.POOL)
-
-      const dataProviderContract = new ethers.Contract(
-        addresses.AAVE_PROTOCOL_DATA_PROVIDER,
-        DataProviderAbi,
-        ethers.provider
+      await safe.borrowFromPool(
+        addresses.POOL,
+        addresses.ASSETS.WETH.UNDERLYING,
+        ethers.utils.parseEther("0.1")
       );
 
-      const pool: Contract = await ethers.getContractAt(
-        PoolABI,
-        addresses.POOL
-      );
-
-      console.log(safe.address)
-      const userAccountData = await pool.getUserAccountData("0x7954f14c81b175B1914d1eaA237E3b9349AAa5dB");
-
-      console.log(userAccountData);
-
-      // We test the validation
+      // We try first with no debt and now assets
       await validate(input);
     });
+  });
 
-    // it("Should allow to withdraw with required healthFactor of 2", async () => {
-    //   const input: Input = {
-    //     chain: {
-    //       id: 1,
-    //       rpc: "https://localhost:8545",
-    //     },
-    //     tx: {
-    //       data: generateCallData(
-    //         "withdraw",
-    //         [addresses.ASSETS.WETH.UNDERLYING, ethers.utils.parseEther("0.1").toString(), safe.address],
-    //         PoolABI
-    //       ),
-    //       to: addresses.POOL,
-    //       value: ethers.constants.Zero.toString(),
-    //     },
-    //     boundaries: {
-    //       allowedActor: safe.address,
-    //       healthFactor: 2,
-    //     },
-    //   };
+  describe("Invalid inputs", () => {
+    it("Should fail if the health factor is too low", async () => {
+      const input: Input = {
+        chain: {
+          id: 1,
+          rpc: "http://127.0.0.1:8545/",
+        },
+        tx: {
+          data: generateCallData(
+            "withdraw",
+            [
+              addresses.ASSETS.WETH.UNDERLYING,
+              ethers.utils.parseEther("0.7").toString(),
+              safe.address,
+            ],
+            PoolABI
+          ),
+          to: addresses.POOL,
+          value: ethers.constants.Zero.toString(),
+        },
+        boundaries: {
+          allowedActor: safe.address,
+          healthFactor: 40000,
+        },
+      };
 
-    //   // We try first with no debt and now assets
-    //   await validate(input);
+      // We now deposit some assets
+      await safe.supplyToPool(
+        addresses.POOL,
+        addresses.ASSETS.WETH.UNDERLYING,
+        ethers.utils.parseEther("1")
+      );
+      const balanceBefore = await safe.getATokenBalance(
+        addresses.ASSETS.WETH.A_TOKEN
+      );
+      expect(balanceBefore.gt(ethers.constants.Zero)).to.be.true;
 
-    //   // We now deposit some assets
-    //   await safe.supplyToPool(
-    //     addresses.POOL,
-    //     addresses.ASSETS.WETH.UNDERLYING,
-    //     ethers.utils.parseEther("1")
-    //   );
-    //   const balanceBefore = await safe.getATokenBalance(
-    //     addresses.ASSETS.WETH.A_TOKEN
-    //   );
-    //   expect(balanceBefore.gt(ethers.constants.Zero)).to.be.true;
-    //   // We retest the validation
-    //   await validate(input);
+      // We now borrow some assets
+      await safe.setAssetAsCollateral(
+        addresses.POOL,
+        addresses.ASSETS.WETH.UNDERLYING
+      );
 
-    //   // We now borrow some assets
-    //   await safe.setAssetAsCollateral(
-    //     addresses.POOL,
-    //     addresses.ASSETS.WETH.UNDERLYING
-    //   );
+      await safe.borrowFromPool(
+        addresses.POOL,
+        addresses.ASSETS.WETH.UNDERLYING,
+        ethers.utils.parseEther("0.1")
+      );
 
-    //   await safe.borrowFromPool(
-    //     addresses.POOL,
-    //     addresses.ASSETS.WETH.UNDERLYING,
-    //     ethers.utils.parseEther("0.1")
-    //   );
-
-    //   const pool: Contract = await ethers.getContractAt(
-    //     PoolABI,
-    //     addresses.POOL
-    //   );
-
-    //   const response = await pool.getUserAccountData(safe.address);
-    //   console.log(response["healthFactor"])
-
-    // });
+      // We try first with no debt and now assets
+      await expect(validate(input)).to.be.rejectedWith(
+        errors.HealthFactorTooLowError
+      );
+    });
   });
 });

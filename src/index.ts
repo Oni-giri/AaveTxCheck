@@ -1,7 +1,7 @@
 import { Input } from "./types";
 import * as helpers from "./helpers";
 import * as errors from "./errors/errors";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "ethers";
 
 export async function validate(input: Input) {
   const addresses = helpers.getAddressBook(input.chain.id);
@@ -40,10 +40,14 @@ export async function validate(input: Input) {
   // Check the health factor after the withdraw
   if (helpers.withdrawSignatures.includes(input.tx.data.slice(0, 10))) {
     const newHealthFactor = await helpers.getHealthFactorAfterWithdraw(input);
-    const maxHealthFactor = new BigNumber(input.boundaries.healthFactor);
-    if (newHealthFactor.isLessThan(maxHealthFactor)) {
+    const maxHealthFactor = BigNumber.from(input.boundaries.healthFactor).mul(
+      BigNumber.from("10").pow(18 - 4)
+    );
+
+
+    if (newHealthFactor.lt(maxHealthFactor)) {
       throw new errors.HealthFactorTooLowError(
-        newHealthFactor.toFixed(),
+        newHealthFactor.toString(),
         input.boundaries.healthFactor
       );
     }
