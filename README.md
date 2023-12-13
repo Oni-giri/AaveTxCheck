@@ -53,5 +53,12 @@ You can test the repo with:
 npm run test
 ```
 
+You'll need to create an ``.env` file in the root folder to specify a testing private key and an RPC:
+
+```bash
+PRIVATE_KEY=""
+RPC_URL="""
+```
+
 
 
