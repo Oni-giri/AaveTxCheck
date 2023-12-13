@@ -36,6 +36,9 @@ type Input = {
 }
 ```
 
+- `chain.id`: the chain id of the transaction. This is used to check the Aave contrac addresses.
+- `chain.rpc`: RPC url the library will use to perform checks.
+
 - `tx.to` : the target of the transaction, e.g the Aave pool.
 - `tx.data` : the calldata that will be sent by you proxy contract.
 - `tx.value` : the amount of native token (e.g ETH) that you intend to include in the transaction.
