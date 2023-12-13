@@ -12,7 +12,7 @@ module.exports = {
   networks: {
     hardhat: {
       forking: {
-        url: "https://eth.drpc.org",
+        url: process.env.RPC_URL,
       },
       accounts: [
         {

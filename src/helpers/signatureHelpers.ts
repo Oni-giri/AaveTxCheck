@@ -33,13 +33,13 @@ async function generateFunctionSignatureMapping(abiFilePath: string): Promise<{ 
 }
 
 export const supplySignatures = [
-  allowedFunctionNames[0],
-  allowedFunctionNames[1],
+  allowedFunctionSignatures[0],
+  allowedFunctionSignatures[1],
 ];
 
 export const withdrawSignatures = [
-  allowedFunctionNames[2],
-  allowedFunctionNames[3],
+  allowedFunctionSignatures[2],
+  allowedFunctionSignatures[3],
 ];
 
 // Function to check if calldata corresponds to an allowed function

@@ -83,7 +83,7 @@ describe("validate.signatures", () => {
             WETHGatewayABI
           ),
           to: addresses.WETH_GATEWAY,
-          value: BigNumber.from(ethers.utils.parseEther("1")).toString(),
+          value: ethers.utils.parseEther("1").toString(),
         },
         boundaries: {
           allowedActor: safe.address,

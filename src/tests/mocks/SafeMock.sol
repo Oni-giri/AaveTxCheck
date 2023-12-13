@@ -45,7 +45,14 @@ contract SafeMock {
         address token,
         uint256 amount
     ) external {
-        IPool(pool).borrow(token, amount, 2, 0, msg.sender);
+        IPool(pool).borrow(token, amount, 2, 0, address(this));
+    }
+
+    function setAssetAsCollateral(
+        address pool,
+        address token
+    ) external {
+        IPool(pool).setUserUseReserveAsCollateral(token, true);
     }
 
     function getATokenBalance(address token) external view returns (uint256) {

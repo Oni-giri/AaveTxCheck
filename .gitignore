@@ -4,3 +4,5 @@ cache
 src/tests/artifacts
 .env
 .cosine
+src/tests/.DS_Store
+src/.DS_Store
