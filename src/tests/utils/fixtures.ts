@@ -4,6 +4,7 @@ import { tokenAddressBook } from "./tokenAddressBook";
 import WETHGatewayABI from "../../abi/WETHGateway.json";
 import PoolABI from "../../abi/Pool.json";
 import ethers from "ethers";
+import { BigNumber } from "ethers";
 
 export async function deploySafeMock(ethers: any): Promise<Contract> {
   const SafeMock = await ethers.getContractFactory("SafeMock");
@@ -19,10 +20,17 @@ export async function approveAavePool(safeMock: Contract): Promise<void> {
   for (const tokenAddress of tokens) {
     await safeMock.approveToken(tokenAddress, addresses.POOL);
   }
+  await safeMock.approveToken(
+    addresses.ASSETS.WETH.UNDERLYING,
+    addresses.WETH_GATEWAY
+  );
+  await safeMock.approveToken(
+    addresses.ASSETS.WETH.A_TOKEN,
+    addresses.WETH_GATEWAY
+  );
 }
 
 export async function supplyETHToPool(
-  signer: Signer,
   safeMock: Contract,
   amount: number,
   ethers: any
@@ -41,7 +49,6 @@ export async function supplyETHToPool(
 }
 
 export async function supplyTokenToPool(
-  signer: Signer,
   safeMock: Contract,
   tokenAddress: string,
   amount: number
@@ -50,6 +57,7 @@ export async function supplyTokenToPool(
   const contractInterface = new ethers.utils.Interface(PoolABI);
   const calldata = contractInterface.encodeFunctionData("supply", [
     tokenAddress,
+    amount,
     safeMock.address,
     0,
   ]);
@@ -58,10 +66,9 @@ export async function supplyTokenToPool(
 }
 
 export async function borrowTokenFromPool(
-  signer: Signer,
   safeMock: Contract,
   tokenAddress: string,
-  amount: ethers.BigNumber
+  amount: BigNumber
 ): Promise<void> {
   const addresses = getAddressBook(1);
   const contractInterface = new ethers.utils.Interface(PoolABI);
@@ -74,4 +81,16 @@ export async function borrowTokenFromPool(
   ]);
 
   await safeMock.executeCall(addresses.POOL, calldata);
+}
+
+export async function getWETH(
+  ethers: any,
+  safeAddress: string,
+  amount: BigNumber
+): Promise<Contract> {
+  const wethAddress: string = tokenAddressBook.ethereum.WETH;
+  const weth: Contract = await ethers.getContractAt("IWETH9", wethAddress);
+  await weth.deposit({ value: amount });
+  await weth.approve(safeAddress, ethers.constants.MaxUint256);
+  return weth;
 }

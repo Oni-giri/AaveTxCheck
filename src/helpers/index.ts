@@ -1,5 +1,5 @@
 import getHealthFactorAfterWithdraw from "./HealthFactorHelpers";
-import { getAddressBook, validatePoolAddress } from "./addressHelpers";
+import { getAddressBook, chainIdToAddressBook } from './addressHelpers';
 import {
   allowedFunctionNames,
   allowedFunctionSignatures,
@@ -7,7 +7,7 @@ import {
   isAllowedActor,
   supplySignatures,
   withdrawSignatures,
-} from "./validationHelpers";
+} from "./signatureHelpers";
 
 export {
   withdrawSignatures,
@@ -16,7 +16,7 @@ export {
   allowedFunctionNames,
   allowedFunctionSignatures,
   supplySignatures,
-  validatePoolAddress,
   getAddressBook,
   getHealthFactorAfterWithdraw,
+  chainIdToAddressBook
 };

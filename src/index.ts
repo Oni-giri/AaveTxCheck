@@ -1,42 +1,51 @@
 import { Input } from "./types";
 import * as helpers from "./helpers";
-
+import * as errors from "./errors/errors";
 import BigNumber from "bignumber.js";
-import { isAllowedSignature } from './helpers/validationHelpers';
 
 export async function validate(input: Input) {
-  // We start by validating the pool address
-  helpers.validatePoolAddress(input);
+  const addresses = helpers.getAddressBook(input.chain.id);
 
-  // We can now analyse the data field of the transaction
+  // Validate the chain id
+  if (!addresses) {
+    throw new errors.InvalidChainIdError(input.chain.id);
+  }
+
+  // Validate the target address
+  if (
+    input.tx.to !== addresses.POOL &&
+    input.tx.to !== addresses.WETH_GATEWAY
+  ) {
+    throw new errors.InvalidTargetAddressError(
+      input.tx.to,
+      addresses.POOL,
+      addresses.WETH_GATEWAY
+    );
+  }
+
+  // Analyse the data field of the transaction
   // Validating the signature
-  if (!isAllowedSignature(input.tx.data)) {
-    throw new Error(
-      `Invalid calldata: ${input.tx.data.slice(0, 10)} \n
-        Expected: \n
-        \t Allowed function signatures: ${helpers.allowedFunctionSignatures}`
+  if (!helpers.isAllowedSignature(input.tx.data)) {
+    throw new errors.InvalidCalldataError(
+      input.tx.data,
+      helpers.allowedFunctionSignatures.join(", ")
     );
   }
 
+  // Validating the actor
   if (!helpers.isAllowedActor(input.boundaries.allowedActor, input.tx.data)) {
-    throw new Error(
-      `Invalid actor \n
-        Expected: \n
-        \t Allowed actor: ${input.boundaries.allowedActor}`
-    );
+    throw new errors.InvalidActorError(input.boundaries.allowedActor);
   }
 
-  // We can now check the health factor of the user after the withdraw, if there is one
+  // Check the health factor after the withdraw
   if (helpers.withdrawSignatures.includes(input.tx.data.slice(0, 10))) {
     const newHealthFactor = await helpers.getHealthFactorAfterWithdraw(input);
     const maxHealthFactor = new BigNumber(input.boundaries.healthFactor);
     if (newHealthFactor.isLessThan(maxHealthFactor)) {
-      throw new Error(
-        `Health factor too low: ${newHealthFactor.toFixed()} \n
-        Expected: \n
-        \t Health factor above ${input.boundaries.healthFactor}`
+      throw new errors.HealthFactorTooLowError(
+        newHealthFactor.toFixed(),
+        input.boundaries.healthFactor
       );
     }
   }
 }
-

@@ -1,5 +1,5 @@
 import { Input } from "../types";
-import { withdrawSignatures } from "./validationHelpers";
+import { withdrawSignatures } from "./signatureHelpers";
 import Web3 from "web3";
 import { AbiItem } from "web3-utils";
 import WETHGatewayAbi from "../abi/WETHGateway.json";
