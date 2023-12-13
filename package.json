@@ -1,6 +1,6 @@
 {
   "name": "aave-tx-check",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility to check if a transaction is a valid Aave transaction",
   "main": "index.js",
   "scripts": {
