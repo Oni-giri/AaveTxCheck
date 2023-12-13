@@ -1,5 +1,6 @@
 require("dotenv").config();
-require("@nomiclabs/hardhat-ethers");
+
+import '@nomiclabs/hardhat-ethers'
 
 
 module.exports = {

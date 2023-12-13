@@ -4,7 +4,8 @@
   "description": "Utility to check if a transaction is a valid Aave transaction",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "hh test",
+    "prepublish": "tsc"
   },
   "keywords": [
     "web3",
@@ -15,6 +16,7 @@
   "author": "Yakitori",
   "license": "ISC",
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@types/chai": "^4.3.11",
     "@types/chai-as-promised": "^7.1.8",
     "@types/mocha": "^10.0.6",
@@ -29,7 +31,6 @@
   },
   "dependencies": {
     "@bgd-labs/aave-address-book": "^2.13.0",
-    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@openzeppelin/contracts": "^5.0.1",
     "bignumber.js": "^9.1.2",
     "dotenv": "^16.3.1",

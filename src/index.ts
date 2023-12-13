@@ -3,7 +3,7 @@ import * as helpers from "./helpers";
 import * as errors from "./errors/errors";
 import { BigNumber } from "ethers";
 
-export async function validate(input: Input) {
+export default async function validate(input: Input) {
   const addresses = helpers.getAddressBook(input.chain.id);
 
   // Validate the chain id

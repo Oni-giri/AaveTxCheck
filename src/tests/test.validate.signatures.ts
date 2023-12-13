@@ -3,7 +3,7 @@ import chaiAsPromised from "chai-as-promised";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ethers } from "hardhat";
 import * as fxt from "./utils/fixtures";
-import { validate } from "../index";
+import validate from "../index";
 import { Input } from "../types";
 import generateCallData from "./utils/generateCallData";
 import { getAddressBook } from "../helpers";
